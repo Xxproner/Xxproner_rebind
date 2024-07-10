@@ -53,6 +53,9 @@ struct NthImpl;
 template <typename... Args>
 struct SizeImpl;
 
+template<bool, bool>
+struct none_op;
+
 } } // namespace rebind::detail
 
 #endif

@@ -36,9 +36,8 @@ using Join = typename detail::JoinImpl<Arguments1, Arguments2>::type;
 /// Append a new type to the given concrete argument vector.
 /// E.g. Append<std::tuple<int>, double>
 ///        -> std::tuple<int, double>
-// TODO: Support appending more than one argument?
-template <typename ConcreteArguments, typename Arg>
-using Append = Join<ConcreteArguments, detail::Arguments<Arg>>;
+template <typename ConcreteArguments, typename... Args>
+using Append = Join<ConcreteArguments, detail::Arguments<Args...>>;
 
 /// E.g. Reverse<std::tuple<int, double>>
 ///        -> std::tuple<double, int>
@@ -137,15 +136,22 @@ using All = Accumulate<TransformEach<Arguments, Pred>,
                        std::true_type,
                        LogicalAnd>;
 
+
+/// Return as an integral constant the custom logical operation of two integral constants
+template <typename C1, typename C2>
+using LogicalNone = std::integral_constant<typename C1::value_type,
+                                        detail::none_op<C1::value, C2::value>::value>;    
+
 /// Return std::true_type or std::false_type depending on whether none of the
 /// Arguments satisfy Pred.
 template <typename Arguments, template <class> class Pred>
 using None = Accumulate<TransformEach<Arguments, Pred>,
                        std::true_type,
-                       detail::LogicalNone>;
+                       LogicalNone>;
 
+// find
 
-
+// search
 
 } // namespace rebind
 

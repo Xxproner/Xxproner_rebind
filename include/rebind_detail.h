@@ -157,16 +157,11 @@ struct SizeImpl
     enum { value = sizeof...(Args) };
 };
 
-class none_op{
-    static constexpr bool operator()(bool l, bool r) noexcept
-    {
-        return l ? r ? false : true : false;
-    };
-};
+template<bool, bool>
+struct none_op : public std::false_type{};
 
-template <typename C1, typename C2>
-using LogicalNone = std::integral_constant<typename C1::value_type,
-                                            none_op(C1::value, C2::value)>;
+template<>
+struct none_op<true, false> : public std::true_type{};
 
 } } // namespace rebind::detail
 

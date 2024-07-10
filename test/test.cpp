@@ -37,6 +37,12 @@ static_assert(std::is_same<Append<TestArgs<int>, double>,
 static_assert(std::is_same<Append<std::tuple<int>, double>,
                            std::tuple<int, double>>(), "");
 
+static_assert(std::is_same<Append<std::tuple<int>, double, double, double>,
+                           std::tuple<int, double, double, double>>(), "");
+
+static_assert(std::is_same<Append<std::tuple<int>, double, float, char, float>,
+                           std::tuple<int, double, float, char, float>>(), "");
+
 ////////////////////////////////////////////////////////////////////////////////
 // Test First and Last
 ////////////////////////////////////////////////////////////////////////////////
@@ -227,6 +233,31 @@ using IsIntegral = typename std::is_integral<T>::type;
 static_assert(!Any<TestArgs<>, IsIntegral>(), "");
 static_assert(Any<TestArgs<int, double>, IsIntegral>(), "");
 static_assert(!Any<TestArgs<float, double>, IsIntegral>(), "");
+
+////////////////////////////////////////////////////////////////////////////////
+// Test All
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+using IsIntegral = typename std::is_integral<T>::type;
+
+// problem test
+// static_assert(!All<TestArgs<>, IsIntegral>(), "");
+static_assert(All<TestArgs<int, int>, IsIntegral>(), "");
+static_assert(!All<TestArgs<int, double>, IsIntegral>(), "");
+static_assert(!All<TestArgs<float, double>, IsIntegral>(), "");
+
+////////////////////////////////////////////////////////////////////////////////
+// Test None
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+using IsIntegral = typename std::is_integral<T>::type;
+
+static_assert(None<TestArgs<>, IsIntegral>(), "");
+static_assert(!None<TestArgs<int>, IsIntegral>(), "");
+static_assert(!None<TestArgs<int, double>, IsIntegral>(), "");
+static_assert(None<TestArgs<float, double>, IsIntegral>(), "");
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main function
