@@ -137,6 +137,16 @@ using All = Accumulate<TransformEach<Arguments, Pred>,
                        std::true_type,
                        LogicalAnd>;
 
+/// Return std::true_type or std::false_type depending on whether none of the
+/// Arguments satisfy Pred.
+template <typename Arguments, template <class> class Pred>
+using None = Accumulate<TransformEach<Arguments, Pred>,
+                       std::true_type,
+                       detail::LogicalNone>;
+
+
+
+
 } // namespace rebind
 
 #include "rebind_detail.h"
