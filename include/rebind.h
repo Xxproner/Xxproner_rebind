@@ -118,12 +118,22 @@ template <typename IC1, typename IC2>
 using LogicalOr = std::integral_constant<typename IC1::value_type,
                                          IC1::value || IC2::value>;
 
+/// Return as an integral constant the logical AND of two integral constants
+template <typename IC1, typename IC2>
+using LogicalAnd = std::integral_constant<typename IC1::value_type,
+                                         IC1::value || IC2::value>;
+
 /// Return std::true_type or std::false_type depending on whether any of the
 /// Arguments satisfy Pred.
 template <typename Arguments, template <class> class Pred>
 using Any = Accumulate<TransformEach<Arguments, Pred>,
                        std::false_type,
                        LogicalOr>;
+
+template <typename Arguments, template <class> class Pred>
+using All = Accumulate<TransformEach<Arguments, Pred>,
+                       std::true_type,
+                       LogicalAnd>;
 
 } // namespace rebind
 
