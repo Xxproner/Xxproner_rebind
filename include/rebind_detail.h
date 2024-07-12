@@ -163,21 +163,27 @@ struct none_op : public std::false_type{};
 template<>
 struct none_op<true, false> : public std::true_type{};
 
-template <typename, typename, 
-    template<typename, typename> class bPred = std::is_same>
-struct Find;
+struct FindImpl {
 
-template <typename FIND_T, template <class...> class Container, 
-    template<typename, typename> class bPred, typename... Args>
-struct Find<FIND_T, Container<Args...>, bPred>
+template <typename FIND_T, template <typename, typename> class bPred, typename NEXT_T, typename... Args>
+constexpr static size_t test(size_t N, std::enable_if_t<bPred<FIND_T, NEXT_T>::value, bool> = true)
 {
-private:
-    using found = std::integral_constant<FIND_T, 
-        Impl::test<FIND_T, bPred, Args...>(0)>;
-        
-public:
-    static constexpr size_t value = 
-        found::value;
+    return N;
+};
+
+// difference type
+template <typename FIND_T, template <typename, typename> class bPred, typename NEXT_T, typename... Args>
+constexpr static size_t test(size_t N, std::enable_if_t<!bPred<FIND_T, NEXT_T>::value, bool> = true)
+{
+    return test<FIND_T, bPred, Args...>(N + 1);
+};
+
+template <typename FIND_T, template <typename, typename> class bPred>
+constexpr static size_t test(size_t N)
+{
+    return N;
+};
+
 };
 
 } } // namespace rebind::detail
