@@ -149,7 +149,20 @@ using None = Accumulate<TransformEach<Arguments, Pred>,
                        std::true_type,
                        LogicalNone>;
 
-// find
+template <typename, typename, template<typename, typename> class bPred = std::is_same>
+struct Find;
+
+template <typename FIND_T, template <class...> class Container, template<typename, typename> class bPred, typename... Args>
+struct Find<FIND_T, Container<Args...>, bPred>
+{
+private:
+    using found = std::integral_constant<FIND_T, 
+        FindImpl::test<FIND_T, bPred, Args...>(0)>;
+        
+public:
+    static constexpr size_t value = 
+        found::value;
+};
 
 // search
 
