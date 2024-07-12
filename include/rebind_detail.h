@@ -163,86 +163,22 @@ struct none_op : public std::false_type{};
 template<>
 struct none_op<true, false> : public std::true_type{};
 
+template <typename, typename, 
+    template<typename, typename> class bPred = std::is_same>
+struct Find;
 
-/******************************************************************************
-
-Welcome to GDB Online.
-  GDB online is an online compiler and debugger tool for C, C++, Python, PHP, Ruby, 
-  C#, OCaml, VB, Perl, Swift, Prolog, Javascript, Pascal, COBOL, HTML, CSS, JS
-  Code, Compile, Run and Debug online from anywhere in world.
-
-*******************************************************************************/
-#include <iostream>
-#include <type_traits>
-
-// ================================================
-// template <typename>
-// struct is_renderable : std::false_type {};
-
-// template <typename T>
-// constexpr bool is_renderable_v{
-//   is_renderable<T>::value};
-
-// ================================================
-
-// template <class F, class... Args>
-// struct is_callable
-// {
-// 	template <class U>
-// 	static auto test(U * p)
-// 		-> decltype((*p)(std::declval<Args>()...), void(), std::true_type());
-
-// 	template <class U>
-// 	static auto test(...) -> decltype(std::false_type());
-
-// 	static constexpr bool value = decltype(test<F>(0))::value;
-// };
-
-// ================================================
-
-// if std::is_same<U, F_t>::value == true
-
-template <typename U, typename F_t, typename... Args>
-struct FindImpl
+template <typename FIND_T, template <class...> class Container, 
+    template<typename, typename> class bPred, typename... Args>
+struct Find<FIND_T, Container<Args...>, bPred>
 {
-    template <typename T1, typename T2, 
-        std::enable_if_t<std::is_same_v<U, F_t>, bool> = true>
-    constexpr static size_t test(size_t N)
-    {
-        return N;
-    };
-    
-    template <typename T1, typename T2, 
-        std::enable_if_t<!std::is_same_v<U, F_t>, bool> = true>
-    constexpr static size_t test(size_t N)
-    {
-        return FindImpl<U, Args...>::template test<U, Args>(N + 1);
-    };
-    
-    template <typename T1>
-    constexpr static size_t test(size_t N)
-    {
-        return N + 1;
-    };
-    
-    const static size_t found = test<U, F_t>(0);   
+private:
+    using found = std::integral_constant<FIND_T, 
+        Impl::test<FIND_T, bPred, Args...>(0)>;
+        
+public:
+    static constexpr size_t value = 
+        found::value;
 };
-
-// base case 
-// template <typename U>
-// struct FindImpl
-// {
-//     size_t found = 0;
-// };
-
-
-// template<bool B, class T = void>
-// struct enable_if {};
-
-// template<class T>
-// struct enable_if<true, T> { typedef T type; };
-
-// ================================================
 
 } } // namespace rebind::detail
 
