@@ -54,7 +54,8 @@ Here are a few others:
  - ``None``: establish if a given predicate is true of none type in a template's argument list
  - ``Find``: get position of argument in a template's argument list that satisfies to given predicate, otherwise numbers of arguments.
 
-   Almost algorithm library!
+Almost algorithm library!
+
 Naming
 ------
 
