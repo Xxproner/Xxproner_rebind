@@ -50,7 +50,11 @@ Here are a few others:
  - ``Size``: get the number of arguments in a template's argument list
  - ``LogicalOr``: _OR_ together two ``std::integral_constant``s
  - ``Any``: establish if a given predicate is true of any type in a template's argument list
+ - ``All``: establish if a given predicate is true of all type in a template's argument list
+ - ``None``: establish if a given predicate is true of none type in a template's argument list
+ - ``Find``: get position of argument in a template's argument list that satisfies to given predicate, otherwise numbers of arguments.
 
+   Almost algorithm library!
 Naming
 ------
 
@@ -109,6 +113,12 @@ Size<A<T...>> = N // where N is the size of T...
 LogicalOr<C1, C2> = std::true_type or std::false_type depending on C1() || C2()
 
 Any<A<T...>, P> = std::true_type or std::false_type depending on whether P<T> is true for at least one T in T...
+
+All<A<T...>, P> = std::true_type or std::false_type depending on whether P<T>... is true
+
+None<A<T...>, P> = std::true_type or std::false_type depending on whether P<T>... is false
+
+Find<A<T...>, P> = ::value // where value is position of U what P<U, T> is std::true_type. Default P = std::is_same
 
 ```
 
