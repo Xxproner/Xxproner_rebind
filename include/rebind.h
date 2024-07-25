@@ -164,6 +164,108 @@ public:
         found::value;
 };
 
+
+template <typename T>
+struct bool_t_to_value 
+{
+    static constexpr size_t value = 0;
+};
+
+template <>
+struct bool_t_to_value<std::true_type>
+{
+    static constexpr size_t value = 1;
+};
+
+constexpr size_t accum()
+{
+    return 0;
+};
+
+template <typename... Bools>
+constexpr size_t accum(bool T, Bools... bools)
+{
+    return T + accum(bools...);
+};
+
+
+// bPred should have value member
+template <typename T, template <typename, typename> class bPred, typename... Args> // start with is_same
+struct Count_Impl : std::integral_constant<size_t, accum(bPred<T, Args>::value...)>
+{
+    // constexpr static size_t value = accum(std::is_same_v<T, Args>...);
+};
+
+template <typename T, typename U, template <typename, typename> class bPred = std::is_same >
+struct Count;
+
+template <typename T, template <class...> class Container, template <typename, typename> class bPred, typename... Args>
+struct Count<T, Container<Args...>, bPred> : std::integral_constant<
+    size_t, Count_Impl<T, bPred, Args...>::value>
+{
+    
+};
+
+template <size_t Num>
+struct NumWrapper : std::integral_constant<size_t, Num> { };
+
+
+template <typename... Args>
+class Arguments
+{
+    
+};
+
+template <typename T, typename U>
+struct is_not_same : std::true_type { };
+
+template <typename T>
+struct is_not_same<T, T> : std::false_type { };
+
+namespace details { 
+    
+struct EndPackType;
+    
+template <typename T, typename Next, typename... Args>
+struct Remove_Impl
+{
+    // template <template <typename...> ArgsList, typename... A>
+    
+    using type = typename Remove_Impl<T, Args...>::type;
+};
+
+template <typename T, typename... Args>
+struct Remove_Impl<T, T, Args...>
+{
+    using type = T;// Arguments<Args...>;
+};
+
+template <typename T>
+struct Remove_Impl<T, EndPackType>
+{
+    using type = T;
+};
+
+}; // namespace details
+
+
+template <typename T, typename Next, typename... Args>
+struct Remove_Impl
+{
+    
+    using type = 
+        typename details::Remove_Impl<T, Args..., details::EndPackType>::type;
+};
+
+template <typename T, typename>
+struct Remove;
+
+template <typename T, template <typename...> class Container, typename... Args>
+struct Remove<T, Container<Args...>>
+{
+    // using type = typename Remove_Impl<T, Args...>::type;
+};
+
 // search
 
 } // namespace rebind
